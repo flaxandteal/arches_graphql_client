@@ -25,9 +25,12 @@ class ResourceClient(BaseClient):
             """
         )
 
-        return await self.client.execute_async(
+        results = await self.client.execute_async(
             query, variable_values={"input": field_sets}
         )
+        return results[f"bulkCreate{studly(self.resource_model_name)}"][
+            f"{camel(self.resource_model_name)}s"
+        ]
 
     async def get(self, id, fields=None):
         if not fields:
