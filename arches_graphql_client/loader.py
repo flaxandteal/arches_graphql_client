@@ -50,7 +50,13 @@ fields_to_coalesce = {}
 
 def _coalesce_to_array(row, target, cb):
     return [
-        cb(row[field]) for field in fields_to_coalesce[target] if pd.notna(row[field])
+        val
+        for val in [
+            cb(row[field])
+            for field in fields_to_coalesce[target]
+            if pd.notna(row[field])
+        ]
+        if val is not None
     ]
 
 
