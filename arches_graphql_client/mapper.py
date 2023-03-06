@@ -52,7 +52,7 @@ class Mapper:
         }
         return values
 
-    async def bulk_create_monuments_from_rows(self, client, rows):
+    async def bulk_create_prepare(self, rows):
         kwmapping = [v for k, v in self.get_maplist() if v not in self.skip]
 
         mapped = [self.map_row(row) for ix, row in rows.iterrows()]
@@ -69,6 +69,10 @@ class Mapper:
             except Exception as exc:
                 raise RuntimeError(f"Could not map fieldset {n}: {field_set}") from exc
 
+        return values
+
+    async def bulk_create_monuments_from_rows(self, client, rows):
+        values = self.bulk_create_prepare(rows)
         return (await client.bulk_create(values))["bulkCreateMonument"]["monuments"]
 
     async def bulk_create_monuments_from_split_df(self, client, split_df):
