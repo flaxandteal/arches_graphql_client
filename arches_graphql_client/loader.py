@@ -54,11 +54,6 @@ def _coalesce_to_array(row, target, cb):
     ]
 
 
-with open("mapping_file_new.csv", "r") as fd:
-    reader = csv.DictReader(fd)
-    next(reader)
-
-
 class Loader:
     types = None
 
@@ -143,11 +138,8 @@ class Loader:
             else:
                 mapping_types[row[arches_field_name]] = (typ, mapping_cb)
 
-        # mapping = {row[source_field_name]: row[arches_field_name] for row in reader if row[arches_field_name] != ""}
-        fields.seek(0)
-
         mapping = {}
-        for row in reader:
+        for row in fields:
             if row[arches_field_name] != "" and "/" not in row[arches_field_name]:
                 mapping[row[source_field_name]] = row[arches_field_name]
 
