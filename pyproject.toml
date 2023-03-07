@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arches-graphql-client"
-version = "0.0.6"
+version = "0.0.7"
 authors = [
     {name = "Phil Weir", email = "phil.weir@flaxandteal.co.uk"},
 ]
@@ -28,4 +28,5 @@ dependencies = [
     "shapely",
     "geojson",
     "pyproj",
+    "python-slugify",
 ]

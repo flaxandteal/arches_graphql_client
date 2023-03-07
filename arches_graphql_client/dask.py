@@ -37,7 +37,7 @@ def bulk_create_from_groups(
     with Client(cluster) as dask_client:
         dask_client.submit(_install).result()
         for n, group in enumerate(groups):
-            print("{n} / {len(groups)}")
+            print(f"{n} / {len(groups)}")
             fut = dask_client.submit(execute, ENDPOINT, group, model, model_name)
             if detach:
                 dask.distributed.fire_and_forget(fut)
