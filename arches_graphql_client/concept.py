@@ -85,3 +85,15 @@ class ConceptClient(BaseClient):
                 variable_values={"identifier": identifier, "concept": concept},
             )
         )["addTerm"]
+
+    async def replace_from_skos(self, file):
+        replace_from_skos_mut = gql(
+            "mutation ($file: Upload!) { replaceFromSkos(file: $file) { ok } }"
+        )
+        return (
+            await self.client.execute_async(
+                replace_from_skos_mut,
+                variable_values={"file": file},
+                upload_files=True
+            )
+        )["replaceFromSkos"]
