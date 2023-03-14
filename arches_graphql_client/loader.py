@@ -14,9 +14,15 @@ from .mapper import Mapper
 from .utils import studly
 
 
+def _transformer(remap):
+        igr = CRS(remap[0])
+        wgs84 = CRS(remap[1])
+        transformer = Transformer.from_crs(igr, wgs84, always_xy=True)
+        return transformer
+
 @cache
-def _caching_crs(proj):
-    return CRS(proj)
+def _caching_transformer(remap):
+    return _transformer(remap)
 
 
 def naive_date_to_date_string(date):
@@ -27,15 +33,13 @@ def naive_date_to_isoformat(date):
     return dateparser.parse(date).isoformat()
 
 
-def shape_to_geojson(shape, remap=None, cache=True):
+def shape_to_geojson(shape, remap=None, skip_cache=False):
     if not shape or pd.isna(shape):
         return None
     # would be best to cache but for now it's throwing pickling error
     if remap:
-        igr = (_caching_crs if cache else CRS)(remap[0])
-        wgs84 = (_caching_crs if cache else CRS)(remap[1])
-        project = Transformer.from_crs(igr, wgs84, always_xy=True).transform
-        destination = shapely.ops.transform(project, shape)
+        transformer = (transformer if skip_cache else _caching_transformer)(remap)
+        destination = shapely.ops.transform(transformer.project, shape)
     else:
         destination = shape
     transformed = geojson.FeatureCollection([geojson.Feature(geometry=destination)])
