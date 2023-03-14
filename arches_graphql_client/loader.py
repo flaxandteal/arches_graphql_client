@@ -1,5 +1,5 @@
 import re
-from functools import partial
+from functools import partial, cache
 import csv
 import shapely.geometry, shapely.ops
 import pandas as pd
@@ -14,6 +14,11 @@ from .mapper import Mapper
 from .utils import studly
 
 
+@cache
+def _caching_crs(proj):
+    return CRS(proj)
+
+
 def naive_date_to_date_string(date):
     return dateparser.parse(date).strftime("%Y-%m-%d")
 
@@ -22,13 +27,13 @@ def naive_date_to_isoformat(date):
     return dateparser.parse(date).isoformat()
 
 
-def shape_to_geojson(shape, remap=None):
+def shape_to_geojson(shape, remap=None, cache=True):
     if not shape or pd.isna(shape):
         return None
     # would be best to cache but for now it's throwing pickling error
     if remap:
-        igr = CRS(remap[0])
-        wgs84 = CRS(remap[1])
+        igr = (_caching_crs if cache else CRS)(remap[0])
+        wgs84 = (_caching_crs if cache else CRS)(remap[1])
         project = Transformer.from_crs(igr, wgs84, always_xy=True).transform
         destination = shapely.ops.transform(project, shape)
     else:
