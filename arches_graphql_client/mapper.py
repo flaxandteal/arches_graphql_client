@@ -21,7 +21,7 @@ class Mapper:
                     for key, val in row.items()
                     if pd.notna(val) and mapping.get(key, key) not in self.skip
                 },
-                **{key: None for key in self.computed_fields},
+                **{key: None for key in self.computed_fields if key not in self.skip},
             )
         )
         return row

@@ -74,6 +74,8 @@ class Loader:
 
     def __init__(self, location_remap=None):
         self.location_remap = location_remap
+        if location_remap:
+            _caching_transformer(location_remap)
         self._set_types()
 
     def _set_types(self):
