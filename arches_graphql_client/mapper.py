@@ -50,7 +50,7 @@ class Mapper:
             for field, value in field_set.items()
             if field in kwmapping
         }
-        return values
+        return {k: v for k, v in values.items() if v is not None}
 
     async def bulk_create_prepare(self, rows):
         kwmapping = [v for k, v in self.get_maplist() if v not in self.skip]
