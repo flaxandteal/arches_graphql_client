@@ -39,7 +39,7 @@ def shape_to_geojson(shape, remap=None, skip_cache=False):
     # would be best to cache but for now it's throwing pickling error
     if remap:
         transformer = (transformer if skip_cache else _caching_transformer)(remap)
-        destination = shapely.ops.transform(transformer.project, shape)
+        destination = shapely.ops.transform(transformer.transform, shape)
     else:
         destination = shape
     transformed = geojson.FeatureCollection([geojson.Feature(geometry=destination)])
