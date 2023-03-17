@@ -61,9 +61,13 @@ class Mapper:
             try:
                 values.append(
                     {
-                        camel(field): self._map_field(field, value, field_set)
-                        for field, value in field_set.items()
-                        if field in kwmapping
+                        k: v
+                        for k, v in {
+                            camel(field): self._map_field(field, value, field_set)
+                            for field, value in field_set.items()
+                            if field in kwmapping
+                        }.items()
+                        if v is not None
                     }
                 )
             except Exception as exc:
