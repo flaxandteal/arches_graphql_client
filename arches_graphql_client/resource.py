@@ -51,7 +51,7 @@ class ResourceClient(BaseClient):
         list_query = gql(
             f"""
             query {{
-              list{studly(self.resource_model_name)} {{
+              {camel(self.resource_model_name)} {{
                 id,
                 {', '.join(field for field in fields)}
               }}
