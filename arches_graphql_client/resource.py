@@ -47,6 +47,21 @@ class ResourceClient(BaseClient):
         )
         return await self.client.execute_async(get_query, variable_values={"id": id})
 
+    async def list(self, fields):
+        list_query = gql(
+            f"""
+            query ($text: String, $fields: [String]) {{
+              list{studly(self.resource_model_name)}() {{
+                id,
+                {', '.join(field for field in fields)}
+              }}
+            }}
+        """
+        )
+        return await self.client.execute_async(
+            list_query, variable_values={}
+        )
+
     async def search(self, text, fields):
         search_query = gql(
             f"""
