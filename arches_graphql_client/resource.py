@@ -50,8 +50,8 @@ class ResourceClient(BaseClient):
     async def list(self, fields):
         list_query = gql(
             f"""
-            query ($text: String, $fields: [String]) {{
-              list{studly(self.resource_model_name)}() {{
+            query {{
+              list{studly(self.resource_model_name)} {{
                 id,
                 {', '.join(field for field in fields)}
               }}
@@ -62,19 +62,23 @@ class ResourceClient(BaseClient):
             list_query, variable_values={}
         )
 
-    async def search(self, text, fields):
+    async def search(self, text, search_fields, fields=None):
         search_query = gql(
             f"""
-            query ($text: String, $fields: [String]) {{
-              search{studly(self.resource_model_name)}(text: $text, fields: $fields) {{
+            query ($text: String, $searchFields: [String]) {{
+              search{studly(self.resource_model_name)}(text: $text, fields: $searchFields) {{
                 id,
                 {', '.join(field for field in fields)}
               }}
             }}
         """
         )
+        if not search_fields:
+            search_fields = fields
+        if not fields:
+            fields = search_fields
         return await self.client.execute_async(
-            search_query, variable_values={"text": text, "fields": fields}
+            search_query, variable_values={"text": text, "searchFields": search_fields, "fields": fields}
         )
 
     # Execute the query on the transport
