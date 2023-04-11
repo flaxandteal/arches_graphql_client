@@ -39,7 +39,8 @@ class ResourceClient(BaseClient):
             f"""
             query ($id: UUID!) {{
                 get{studly(self.resource_model_name)} (id: $id) {{
-                    {', '.join(field for field in fields)}
+                  id,
+                  {', '.join(field for field in fields)}
                 }}
             }}
         """
@@ -51,8 +52,8 @@ class ResourceClient(BaseClient):
             f"""
             query ($text: String, $fields: [String]) {{
               search{studly(self.resource_model_name)}(text: $text, fields: $fields) {{
-                  id
-                  {camel(self.resource_model_name)}
+                id,
+                {', '.join(field for field in fields)}
               }}
             }}
         """
