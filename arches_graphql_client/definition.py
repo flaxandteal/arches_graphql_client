@@ -12,6 +12,8 @@ mapping_types_standardization = {
     "date": "date",
     "datetime": "datetime",
     "text": "str",
+    "resource": "resource",
+    "[resource]": "[resource]",
     "location": "geojson",
     "dropdown": "concept",
     "[text]": "[str]",
