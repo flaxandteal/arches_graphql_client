@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arches-graphql-client"
-version = "0.0.8"
+version = "0.0.9"
 authors = [
     {name = "Phil Weir", email = "phil.weir@flaxandteal.co.uk"},
 ]
