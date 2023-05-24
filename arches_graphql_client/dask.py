@@ -2,12 +2,12 @@ import dask
 from dask.distributed import Client
 
 
-def execute(ENDPOINT, values, model, model_name):
+def execute(ENDPOINT, values, model, model_name, headers=headers):
     import arches_graphql_client
     import asyncio
 
     client = arches_graphql_client.ResourceClient(ENDPOINT, model, model_name)
-    client.connect(timeout=300)
+    client.connect(timeout=300, headers=headers)
     results = asyncio.run((client.bulk_create)(values))
     return results
 
@@ -31,6 +31,7 @@ def bulk_create_from_groups(
     detach=False,
     model="monument",
     model_name="monument_name",
+    headers=None
 ):
     results = []
 
@@ -38,7 +39,7 @@ def bulk_create_from_groups(
         dask_client.submit(_install).result()
         for n, group in enumerate(groups):
             print(f"{n} / {len(groups)}")
-            fut = dask_client.submit(execute, ENDPOINT, group, model, model_name)
+            fut = dask_client.submit(execute, ENDPOINT, group, model, model_name, headers)
             if detach:
                 dask.distributed.fire_and_forget(fut)
             else:

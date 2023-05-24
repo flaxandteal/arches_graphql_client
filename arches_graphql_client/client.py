@@ -18,8 +18,11 @@ class BaseClient(metaclass=ABCMeta):
     def __url_prefix__(self):
         ...
 
-    def connect(self, timeout=30):
-        transport = AIOHTTPTransport(url=f"{self.root}{self.__url_prefix__}")
+    def connect(self, timeout=30, headers=None):
+        transport = AIOHTTPTransport(
+            url=f"{self.root}{self.__url_prefix__}",
+            headers=headers
+        )
         self.client = Client(
             transport=transport,
             fetch_schema_from_transport=True,
