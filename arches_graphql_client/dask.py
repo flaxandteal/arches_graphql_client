@@ -2,7 +2,7 @@ import dask
 from dask.distributed import Client
 
 
-def execute(ENDPOINT, values, model, model_name, headers=headers):
+def execute(ENDPOINT, values, model, model_name, headers=None):
     import arches_graphql_client
     import asyncio
 
