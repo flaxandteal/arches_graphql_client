@@ -1,13 +1,14 @@
 import dask
 from dask.distributed import Client
 
+DEFAULT_TIMEOUT = 300
 
 def execute(ENDPOINT, values, model, model_name, headers=None):
     import arches_graphql_client
     import asyncio
 
     client = arches_graphql_client.ResourceClient(ENDPOINT, model, model_name)
-    client.connect(timeout=300, headers=headers)
+    client.connect(timeout=DEFAULT_TIMEOUT, headers=headers)
     results = asyncio.run((client.bulk_create)(values))
     return results
 
