@@ -3,6 +3,8 @@ import logging
 from dask.distributed import Client
 import dask.distributed
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_TIMEOUT = 300
 
 def execute(ENDPOINT, values, model, model_name, headers=None, do_index=True):
@@ -42,7 +44,7 @@ def bulk_create_from_groups(
     with Client(cluster) as dask_client:
         dask_client.submit(_install).result()
         for n, group in enumerate(groups):
-            logging.info(f"{n} / {len(groups)}")
+            logger.info(f"{n} / {len(groups)}")
             fut = dask_client.submit(execute, ENDPOINT, group, model, model_name, headers, do_index)
             if detach:
                 dask.distributed.fire_and_forget(fut)
