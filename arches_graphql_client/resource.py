@@ -1,4 +1,5 @@
 from gql import gql
+import logging
 
 from .client import BaseClient
 from .utils import camel, studly
@@ -13,11 +14,11 @@ class ResourceClient(BaseClient):
         self.resource_model_name = resource_model_name
         self.label_field = label_field
 
-    async def bulk_create(self, field_sets):
+    async def bulk_create(self, field_sets, do_index=True):
         query = gql(
             f"""
-            mutation bulkCreate{studly(self.resource_model_name)}($input: [{studly(self.resource_model_name)}Input]) {{
-                bulkCreate{studly(self.resource_model_name)}(fieldSets: $input) {{
+            mutation bulkCreate{studly(self.resource_model_name)}($input: [{studly(self.resource_model_name)}Input], $doIndex: Boolean) {{
+                bulkCreate{studly(self.resource_model_name)}(fieldSets: $input, doIndex: $doIndex) {{
                     ok,
                     {camel(self.resource_model_name)}s {{ id, {camel(self.label_field)} }}
                 }}
@@ -25,8 +26,9 @@ class ResourceClient(BaseClient):
             """
         )
 
+        logging.debug(f"Bulk creating {len(field_sets)} {resource_model_name} inputs (index={do_index})")
         results = await self.client.execute_async(
-            query, variable_values={"input": field_sets}
+            query, variable_values={"input": field_sets, "doIndex": do_index}
         )
         return results[f"bulkCreate{studly(self.resource_model_name)}"][
             f"{camel(self.resource_model_name)}s"
