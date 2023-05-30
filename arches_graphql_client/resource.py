@@ -5,6 +5,9 @@ from .client import BaseClient
 from .utils import camel, studly
 
 
+logger = logging.getLogger(__name__)
+
+
 class ResourceClient(BaseClient):
     __url_prefix__ = "resources/"
     client = None
