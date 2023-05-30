@@ -49,6 +49,7 @@ def shape_to_geojson(shape, remap=None, skip_cache=False):
 mapping = {}
 mapping_types_standardization = {
     "text": "str",
+    "boolean": "bool",
     "dropdown": "concept",
     "location": "location",
     "option select": "concept",
