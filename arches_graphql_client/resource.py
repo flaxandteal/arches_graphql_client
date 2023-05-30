@@ -26,7 +26,7 @@ class ResourceClient(BaseClient):
             """
         )
 
-        logging.debug(f"Bulk creating {len(field_sets)} {resource_model_name} inputs (index={do_index})")
+        logging.debug(f"Bulk creating {len(field_sets)} {self.resource_model_name} inputs (index={do_index})")
         results = await self.client.execute_async(
             query, variable_values={"input": field_sets, "doIndex": do_index}
         )
