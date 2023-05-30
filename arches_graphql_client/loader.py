@@ -87,6 +87,7 @@ class Loader:
                 "list": list,
                 "dict": dict,
                 "bool": bool,
+                "edtf": str,
                 "date": naive_date_to_date_string,
                 "datetime": naive_date_to_isoformat,
                 "location": lambda *args, **kwargs: shape_to_geojson(
