@@ -5,6 +5,7 @@ import sys
 
 mapping_types_standardization = {
     "str": "str",
+    "bool": "bool",
     "edtf": "edtf",
     "integer": "int",
     "int": "int",
