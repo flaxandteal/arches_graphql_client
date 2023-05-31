@@ -37,13 +37,14 @@ def update_mapping_new(arches_model, filename):
                 print("Missing", row["type"])
                 continue
             if row["map_name_arches"]:
-                typ = row["type"]
+                typ = mapping_types_standardization[row["type"]]
                 models[row["map_name_arches"]] = {
-                    "lang": row.get("Language", "en"),
-                    "type": mapping_types_standardization[typ],
+                    "type": typ,
                     "nodeid": node["nodeid"],
                     "nodegroupid": node["nodegroup_id"],
                 }
+                if typ in ("str", "[str]"):
+                    models[row["map_name_arches"]]["lang"] = row.get("Language", "en")
                 assert node["nodeid"] == row["nodeid"]
                 assert node["nodegroup_id"] == row["nodegroup_id"]
                 if row["nodegroup_id"] in parents:
