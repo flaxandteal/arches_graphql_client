@@ -29,5 +29,6 @@ dependencies = [
     "geojson",
     "pyproj",
     "python-slugify",
-    "dask[distributed"],
+    "ray",
+    "dask[distributed]",
 ]
