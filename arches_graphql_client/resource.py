@@ -12,7 +12,7 @@ class ResourceClient(BaseClient):
     __url_prefix__ = "resources/"
     client = None
 
-    def __init__(self, root, resource_model_name, label_field):
+    def __init__(self, root=None, resource_model_name=None, label_field=None):
         super().__init__(root)
         self.resource_model_name = resource_model_name
         self.label_field = label_field

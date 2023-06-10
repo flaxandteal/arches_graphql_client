@@ -12,7 +12,9 @@ class BaseClient(metaclass=ABCMeta):
     client = None
     root = None
 
-    def __init__(self, root):
+    def __init__(self, root=None):
+        if root is None:
+            root = get("server").get("endpoint")
         self.root = root
 
     @property
