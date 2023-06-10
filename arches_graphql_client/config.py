@@ -5,7 +5,7 @@ _CONFIGURATION = {}
 def load(config_file):
     global _CONFIGURATION
     with open(config_file, "r") as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
     _CONFIGURATION.update(config)
 
 def get(key):
