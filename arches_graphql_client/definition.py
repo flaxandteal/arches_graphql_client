@@ -31,12 +31,12 @@ def update_mapping_new(arches_model, filename):
     models = {}
     with open(filename, "r") as fd:
         reader = csv.DictReader(fd)
-        for row in reader:
-            node = nodes[row["map_name_arches"].split("/", -1)[-1]]
+        for n, row in enumerate(reader):
             if row["type"] not in mapping_types_standardization:
                 print("Missing", row["type"])
                 continue
             if row["map_name_arches"]:
+                node = nodes[row["map_name_arches"].split("/", -1)[-1]]
                 typ = mapping_types_standardization[row["type"]]
                 models[row["map_name_arches"]] = {
                     "type": typ,
@@ -49,6 +49,8 @@ def update_mapping_new(arches_model, filename):
                 assert node["nodegroup_id"] == row["nodegroup_id"]
                 if row["nodegroup_id"] in parents:
                     models[row["map_name_arches"]]["parentnodegroup_id"] = parents[node["nodegroup_id"]]
+            else:
+                print("map_name_arches missing in row", n)
 
     models["graphid"] = model_definition["graphid"]
     return models
