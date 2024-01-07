@@ -17,6 +17,26 @@ class ResourceClient(BaseClient):
         self.resource_model_name = resource_model_name
         self.label_field = label_field
 
+    async def create(self, field_set, do_index=True):
+        query = gql(
+            f"""
+            mutation create{studly(self.resource_model_name)}($input: {studly(self.resource_model_name)}Input, $doIndex: Boolean) {{
+                create{studly(self.resource_model_name)}(fieldSet: $input, doIndex: $doIndex) {{
+                    ok,
+                    {camel(self.resource_model_name)} {{ id {f", {camel(self.label_field)}" if self.label_field else ""} }}
+                }}
+            }}
+            """
+        )
+
+        logger.debug(f"Bulk creating {self.resource_model_name} (index={do_index})")
+        results = await self.client.execute_async(
+            query, variable_values={"input": field_set, "doIndex": do_index}
+        )
+        return results[f"create{studly(self.resource_model_name)}"][
+            f"{camel(self.resource_model_name)}"
+        ]
+
     async def bulk_create(self, field_sets, do_index=True):
         query = gql(
             f"""
@@ -37,6 +57,16 @@ class ResourceClient(BaseClient):
             f"{camel(self.resource_model_name)}s"
         ]
 
+    @staticmethod
+    def _flatten(field):
+        if isinstance(field, tuple):
+            if len(field) != 2 or not isinstance(field[1], list):
+                raise RuntimeError("Nested fields must be a pair with second entry a list of subfields")
+            return field[0] + "{" + ResourceClient._flatten(field[1]) + "}"
+        if isinstance(field, list):
+            return ", ".join(ResourceClient._flatten(fld) for fld in field)
+        return field
+
     async def get(self, id, fields=None):
         if not fields:
             fields = [self.label_field]
@@ -45,7 +75,7 @@ class ResourceClient(BaseClient):
             query ($id: UUID!) {{
                 get{studly(self.resource_model_name)} (id: $id) {{
                   id,
-                  {', '.join(field for field in fields)}
+                  { self._flatten(fields) }
                 }}
             }}
         """
@@ -58,7 +88,7 @@ class ResourceClient(BaseClient):
             query {{
               {camel(self.resource_model_name)} {{
                 id,
-                {', '.join(field for field in fields)}
+                { self._flatten(fields) }
               }}
             }}
         """
@@ -73,7 +103,7 @@ class ResourceClient(BaseClient):
             query ($text: String, $searchFields: [String]) {{
               search{studly(self.resource_model_name)}(text: $text, fields: $searchFields) {{
                 id,
-                {', '.join(field for field in fields)}
+                { self._flatten(fields) }
               }}
             }}
         """
