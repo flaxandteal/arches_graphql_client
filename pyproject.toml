@@ -22,6 +22,7 @@ classifiers = [
 ]
 dependencies = [
     "gql",
+    "aiohttp",
     "pandas",
     "dateparser",
     "geopandas",

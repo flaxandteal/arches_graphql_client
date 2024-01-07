@@ -67,6 +67,16 @@ class ResourceClient(BaseClient):
             f"{camel(self.resource_model_name)}s"
         ]
 
+    @staticmethod
+    def _flatten(field):
+        if isinstance(field, tuple):
+            if len(field) != 2 or not isinstance(field[1], list):
+                raise RuntimeError("Nested fields must be a pair with second entry a list of subfields")
+            return field[0] + "{" + ResourceClient._flatten(field[1]) + "}"
+        if isinstance(field, list):
+            return ", ".join(ResourceClient._flatten(fld) for fld in field)
+        return field
+
     async def get(self, id, fields=None):
         if not fields:
             fields = [self.label_field]
@@ -75,7 +85,7 @@ class ResourceClient(BaseClient):
             query ($id: UUID!) {{
                 get{studly(self.resource_model_name)} (id: $id) {{
                   id,
-                  {', '.join((f"{ field[0] } {{ { ', '.join(field[1]) } }}" if isinstance(field, tuple) else field) for field in fields)}
+                  { self._flatten(fields) }
                 }}
             }}
         """
@@ -88,7 +98,7 @@ class ResourceClient(BaseClient):
             query {{
               {camel(self.resource_model_name)} {{
                 id,
-                {', '.join(field for field in fields)}
+                { self._flatten(fields) }
               }}
             }}
         """
@@ -103,7 +113,7 @@ class ResourceClient(BaseClient):
             query ($text: String, $searchFields: [String]) {{
               search{studly(self.resource_model_name)}(text: $text, fields: $searchFields) {{
                 id,
-                {', '.join(field for field in fields)}
+                { self._flatten(fields) }
               }}
             }}
         """
