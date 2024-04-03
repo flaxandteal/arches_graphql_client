@@ -18,18 +18,23 @@ class ResourceClient(BaseClient):
         self.label_field = label_field
 
     async def create(self, field_set, do_index=True):
+        if self.label_field:
+            return_fields = f"{{ id, {camel(self.label_field)} }}"
+        else:
+            return_fields = "{ id }"
+
         query = gql(
             f"""
             mutation create{studly(self.resource_model_name)}($input: {studly(self.resource_model_name)}Input, $doIndex: Boolean) {{
                 create{studly(self.resource_model_name)}(fieldSet: $input, doIndex: $doIndex) {{
                     ok,
-                    {camel(self.resource_model_name)} {{ id {f", {camel(self.label_field)}" if self.label_field else ""} }}
+                    {camel(self.resource_model_name)} {return_fields}
                 }}
             }}
             """
         )
 
-        logger.debug(f"Bulk creating {self.resource_model_name} (index={do_index})")
+        logger.debug(f"Creating {self.resource_model_name} (index={do_index})")
         results = await self.client.execute_async(
             query, variable_values={"input": field_set, "doIndex": do_index}
         )
@@ -38,12 +43,17 @@ class ResourceClient(BaseClient):
         ]
 
     async def bulk_create(self, field_sets, do_index=True):
+        if self.label_field:
+            return_fields = f"{{ id, {camel(self.label_field)} }}"
+        else:
+            return_fields = "{ id }"
+
         query = gql(
             f"""
             mutation bulkCreate{studly(self.resource_model_name)}($input: [{studly(self.resource_model_name)}Input], $doIndex: Boolean) {{
                 bulkCreate{studly(self.resource_model_name)}(fieldSets: $input, doIndex: $doIndex) {{
                     ok,
-                    {camel(self.resource_model_name)}s {{ id, {camel(self.label_field)} }}
+                    {camel(self.resource_model_name)}s {return_fields}
                 }}
             }}
             """
