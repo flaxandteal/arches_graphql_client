@@ -31,4 +31,6 @@ dependencies = [
     "python-slugify",
     "ray",
     "dask[distributed]",
+    "click",
+    "aiohttp",
 ]

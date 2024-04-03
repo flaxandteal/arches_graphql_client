@@ -25,7 +25,10 @@ class BaseClient(metaclass=ABCMeta):
     def connect(self, timeout=30, headers=None):
         auth_config = get("auth")
         _headers = {}
-        if (client_id := auth_config.get("client_id")) is not None and (client_secret := auth_config.get("client_secret")) is not None:
+        if (cred := auth_config.get("token")) is not None:
+            auth_headers = {"Authorization": "Bearer " + cred}
+            _headers.update(auth_headers)
+        elif (client_id := auth_config.get("client_id")) is not None and (client_secret := auth_config.get("client_secret")) is not None:
             credential = "{0}:{1}".format(client_id, client_secret)
             cred = base64.b64encode(credential.encode("utf-8"))
             auth_headers = {"Authorization": "Basic " + cred.decode("utf-8")}
