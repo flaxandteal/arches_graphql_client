@@ -33,4 +33,5 @@ dependencies = [
     "dask[distributed]",
     "click",
     "aiohttp",
+    "requests",
 ]
