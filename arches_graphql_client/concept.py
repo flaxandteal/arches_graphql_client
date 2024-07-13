@@ -20,7 +20,7 @@ class ConceptClient(BaseClient):
 
     async def get_concept(self, name_or_id):
         get_terms_query = gql(
-            "query ($concept: String) { getConcept(nameOrId: $concept) { id, label, nodetype } }"
+            "query ($concept: String) { getConcept(nameOrId: $concept) { id, label, nodetype, slug } }"
         )
         return (
             await self.client.execute_async(
@@ -50,11 +50,11 @@ class ConceptClient(BaseClient):
             await self.client.execute_async(
                 get_terms_query, variable_values={"concept": concept}
             )
-        )["getTerms"]
+        )["getTermList"]
 
     async def get_terms(self, concept):
         get_terms_query = gql(
-            "query ($concept: String) { getTerms(conceptNameOrId: $concept) { label, fullLabel, identifier } }"
+            "query ($concept: String) { getTerms(conceptNameOrId: $concept) { label, fullLabel, identifier, slug } }"
         )
         return [
             term
